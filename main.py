@@ -78,14 +78,14 @@ track_to_collection = sq.Table(
 )
 
 if __name__ == '__main__':
-    # session = Session()
-    # Base.metadata.create_all(engine)
+    session = Session()
+    Base.metadata.create_all(engine)
 
-    # session.commit()
-    # connection.execute("""
-    # # DROP TABLE track_to_collection;""")
+    session.commit()
+    connection.execute("""
+    # DROP TABLE track_to_collection;""")
 
-    # INSERT==========================================================
+#    ==================================================INSERT==========================================================
 
     artist = [
         'Kaiser_Chiefs', 'Franz_Ferdinand', 'Led_Zeppelin', 'Nirvana',
@@ -108,40 +108,40 @@ if __name__ == '__main__':
         'Helogoland': 2010,
     }
     session = Session()
-    # for i in artist:
-    #     artist = Artist(name=i)
-    #     session.add(artist)
-    #
-    # for i in genre:
-    #     genre_obj = Genre(name=i)
-    #     session.add(genre_obj)
+    for i in artist:
+        artist = Artist(name=i)
+        session.add(artist)
 
-    # for i in album.items():
-    #     album_obj = Album(name=i[0], release_year=i[1])
-    #     session.add(album_obj)
+    for i in genre:
+        genre_obj = Genre(name=i)
+        session.add(genre_obj)
+
+    for i in album.items():
+        album_obj = Album(name=i[0], release_year=i[1])
+        session.add(album_obj)
 
     artist_genre = {
         'Kaiser_Chiefs': 'Indie', 'Franz_Ferdinand': 'Indie', 'Led_Zeppelin': 'Hard_Rock', 'Nirvana': 'Grunge',
         'FKJ': 'Electronics', 'Jose_James': 'Jazz', 'Blink-182': 'Punk-rock', 'Massive_Attack': 'Trip-Hop'
     }
 
-    # for i in artist_genre.items():
-    #     a = session.query(Artist).filter(Artist.name == i[0]).first()
-    #     g = session.query(Genre).filter(Genre.name == i[1]).first()
-    #     a.genre.append(g)
-    #     session.add(a)
+    for i in artist_genre.items():
+        a = session.query(Artist).filter(Artist.name == i[0]).first()
+        g = session.query(Genre).filter(Genre.name == i[1]).first()
+        a.genre.append(g)
+        session.add(a)
     artist_album = {
         'Kaiser_Chiefs': ['Duck'], 'Franz_Ferdinand': ['Always_Acsending'], 'Led_Zeppelin': ['Led_Zeppelin_IV'],
         'Nirvana': ['Nevermind'], 'FKJ': ['Just_Piano'], 'Jose_James': ['Lean_On_Me'], 'Blink-182': ['California'],
         'Massive_Attack': ['Helogoland']
     }
-    #
-    # for i in artist_album.items():
-    #     artist = session.query(Artist).filter(Artist.name == i[0]).first()
-    #     for j in i[1]:
-    #         album = session.query(Album).filter(Album.name == j).first()
-    #         album.artist.append(artist)
-    #         session.add(album)
+
+    for i in artist_album.items():
+        artist = session.query(Artist).filter(Artist.name == i[0]).first()
+        for j in i[1]:
+            album = session.query(Album).filter(Album.name == j).first()
+            album.artist.append(artist)
+            session.add(album)
 
     track = [
         {'track_name': 'People_Know_How_To_Love_One_Another',
@@ -219,6 +219,47 @@ if __name__ == '__main__':
         album_id = session.query(Album).filter(Album.name == album_name).first()
         track_for_add = Track(name=track_name, album_id=album_id.id, length=track_len)
         session.add(track_for_add)
+
+    collection = [
+        {'name': 'Chill',
+         'year': 2019,
+         'tracks': ['Sundays', 'Prey_For_Rain']},
+        {'name': 'Rock',
+         'year': 2020,
+         'tracks': ['Bored_to_Death', 'Smells_Like_Teen_Spirit']},
+        {'name': 'Electro',
+         'year': 2019,
+         'tracks': ['Babel', 'Anthem']},
+        {'name': 'Indie',
+         'year': 2018,
+         'tracks': ['Golden_Oldies', 'Lazy_Boy']},
+        {'name': 'Just_Hard',
+         'year': 2017,
+         'tracks': ['In_Bloom', 'Black_Dog', 'She_is_out_Of_Her_Mind']},
+        {'name': 'New',
+         'year': 2020,
+         'tracks': ['Lean_On_Me', 'Sundays']},
+        {'name': 'Under_Stars',
+         'year': 2021,
+         'tracks': ['Always_Acsending', 'Wait']},
+        {'name': 'Ctrl_Alt',
+         'year': 2021,
+         'tracks': ['Splitting_The_Atom', 'Anthem']}
+    ]
+
+    for collect in collection:
+        collection_name = collect['name']
+        collection_year = collect['year']
+        collection_tracks = collect['tracks']
+        collection = Collection(name=collection_name, release_year=collection_year)
+        session.add(collection)
+
+    for collect in collection:
+        changed_collect = session.query(Collection).filter(Collection.name == collect['name']).first()
+        for track in collect['tracks']:
+            track_for_add = session.query(Track).filter(Track.name == track).first()
+            changed_collect.track.append(track_for_add)
+        session.add(changed_collect)
 
     session.commit()
 

@@ -18,9 +18,6 @@ class Artist(Base):
     genre = relationship('Genre', secondary='artist_to_genre', back_populates='artist')
     album = relationship('Album', secondary='artist_to_album', back_populates='artist')
 
-    def __repr__(self):
-        return self.id
-
 
 class Genre(Base):
     __tablename__ = 'genre'
@@ -37,6 +34,7 @@ class Album(Base):
     name = sq.Column(sq.String, nullable=False)
     release_year = sq.Column(sq.Integer, nullable=False)
     artist = relationship(Artist, secondary='artist_to_album', back_populates='album')
+    track = relationship('Track', back_populates='album')
 
 
 class Track(Base):
